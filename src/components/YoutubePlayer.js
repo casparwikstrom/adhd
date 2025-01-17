@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import YouTube from 'react-youtube';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 
 // Relaxing music playlist for breaks
 const PLAYLIST_ID = 'PLxtOUC943-Mkqp_BgcOf_bSy7RPA2o6eF';
@@ -8,7 +8,7 @@ const PLAYLIST_ID = 'PLxtOUC943-Mkqp_BgcOf_bSy7RPA2o6eF';
 const YoutubePlayer = ({ duration, onComplete }) => {
   const [player, setPlayer] = useState(null);
   const [videoEnded, setVideoEnded] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(duration * 60); // Convert minutes to seconds
+  const [timeLeft, setTimeLeft] = useState(duration); // Convert minutes to seconds
 
   useEffect(() => {
     let timer;
@@ -39,12 +39,6 @@ const YoutubePlayer = ({ duration, onComplete }) => {
     if (player) {
       player.playVideoAt(Math.floor(Math.random() * 50)); // Play random video from playlist
     }
-  };
-
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
   const opts = {
@@ -88,7 +82,7 @@ const YoutubePlayer = ({ duration, onComplete }) => {
           textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
         }}
       >
-        {formatTime(timeLeft)}
+        {timeLeft}
       </Typography>
       <YouTube
         videoId=""
@@ -96,6 +90,19 @@ const YoutubePlayer = ({ duration, onComplete }) => {
         onReady={onReady}
         onEnd={onEnd}
       />
+      <Button
+        variant="contained"
+        color="primary"
+        size="large"
+        onClick={onComplete}
+        sx={{
+          mt: 3,
+          fontWeight: 'bold',
+          padding: '10px 30px'
+        }}
+      >
+        Back to Work
+      </Button>
     </Box>
   );
 };
