@@ -66,7 +66,7 @@ const Timer = ({
         onWorkComplete();
       } else {
         setIsBreak(false);
-        setAccumulatedBreakTime(0);
+
       }
     }
 

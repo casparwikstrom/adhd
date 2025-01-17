@@ -43,6 +43,7 @@ function App() {
 
   useEffect(() => {
     // Listen for Git commit events from the main process
+    console.log('Listening for Git commit events');
     window.electron?.receive('git-commit', () => {
       setShowReward(true);
       sounds.complete.play();
