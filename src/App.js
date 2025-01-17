@@ -40,6 +40,7 @@ function App() {
   const [showReward, setShowReward] = useState(false);
   const [completedSessions, setCompletedSessions] = useState(0);
 
+
   useEffect(() => {
     // Listen for Git commit events from the main process
     window.electron?.receive('git-commit', () => {
