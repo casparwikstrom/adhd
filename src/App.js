@@ -45,7 +45,7 @@ function App() {
     // Debug listener that logs all data from electron
     window.electron?.receive('git-commit', (commitData) => {
       console.log('Received from electron:', commitData);  // This will show all data
-
+      debugger;
       // Original code continues...
       setShowReward(true);
       sounds.complete.play();
