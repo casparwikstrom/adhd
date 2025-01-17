@@ -44,14 +44,14 @@ function App() {
   useEffect(() => {
     // Debug listener that logs all data from electron
     // Add this in DevTools console
-if (window.electron?.receive) {
-  debugger;
-  window.electron.receive('git-commit', (data) => {
-    console.log('Git Commit Data:', data);
-  });
-} else {
-  console.log('Electron receive not available');
-}
+    if (window.electron?.receive) {
+
+      window.electron.receive('git-commit', (data) => {
+        console.log('Git Commit Data:', data);
+      });
+    } else {
+      console.log('Electron receive not available');
+    }
     // window.electron?.receive('git-commit', (commitData) => {
     //   console.log('Received from electron:', commitData);  // This will show all data
     //   debugger;
