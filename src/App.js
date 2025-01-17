@@ -43,12 +43,19 @@ function App() {
 
   useEffect(() => {
     // Listen for Git commit events from the main process
-    console.log('Listening for Git commit events');
-    window.electron?.receive('git-commit', () => {
-      setShowReward(true);
-      sounds.complete.play();
-      setTimeout(() => setShowReward(false), 3000);
-    });
+    if (window.electron?.receive) {
+      // Manually trigger the git-commit event
+      debugger;
+
+      window.electron.receive('git-commit', {
+        hash: '123abc',
+        message: 'Test commit',
+        author: 'Test User',
+        date: new Date().toISOString()
+      });
+    } else {
+      console.log('Electron receive not available');
+    }
   }, []);
 
   const handleWorkComplete = () => {
