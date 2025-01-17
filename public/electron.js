@@ -59,7 +59,7 @@ async function checkGitCommits() {
   try {
     const log = await git.log();
     const latestCommit = log.latest;
-
+    debugger;
     if (latestCommit && latestCommit.hash !== lastCommitHash) {
       console.log('New commit detected:', latestCommit.message);
       lastCommitHash = latestCommit.hash;
