@@ -16,6 +16,8 @@ const TimerDisplay = styled(Box)(({ theme }) => ({
   justifyContent: 'center',
 }));
 
+const BASE_BREAK_TIME = 5; // 5 seconds for testing
+
 const Timer = ({
   onWorkComplete,
   isBreak,
@@ -23,21 +25,26 @@ const Timer = ({
   accumulatedBreakTime,
   setAccumulatedBreakTime,
   completedSessions,
+  setCompletedSessions,
+  onToggleTimer,
+  workTime
 }) => {
-  const [timeLeft, setTimeLeft] = useState(5); // 5 seconds for testing
+  const [timeLeft, setTimeLeft] = useState(workTime);
   const [isActive, setIsActive] = useState(false);
   const [progress, setProgress] = useState(100);
 
   const getInitialTime = useCallback(() => {
     if (isBreak) {
-      const baseBreakTime = completedSessions % 4 === 0 ? 10 : 5;
-      return (baseBreakTime + accumulatedBreakTime) * 60;
+      return accumulatedBreakTime;
     }
-    return 5; // 5 seconds work session for testing
-  }, [isBreak, completedSessions, accumulatedBreakTime]);
+    return workTime;
+  }, [isBreak, workTime, accumulatedBreakTime]);
 
+  // Reset timer when switching between work and break
   useEffect(() => {
     setTimeLeft(getInitialTime());
+    setProgress(100);
+    setIsActive(false);
   }, [isBreak, getInitialTime]);
 
   useEffect(() => {
@@ -52,27 +59,34 @@ const Timer = ({
           return newTime;
         });
       }, 1000);
-    } else if (timeLeft === 0) {
+    } else if (timeLeft === 0 && isActive) {
       setIsActive(false);
       if (!isBreak) {
+        setCompletedSessions(prev => prev + 1);
         onWorkComplete();
       } else {
         setIsBreak(false);
-        setAccumulatedBreakTime(0);
+
       }
     }
 
     return () => clearInterval(interval);
-  }, [isActive, timeLeft, isBreak, onWorkComplete, setIsBreak, getInitialTime, setAccumulatedBreakTime]);
+  }, [isActive, timeLeft, isBreak, onWorkComplete, setIsBreak, getInitialTime, setAccumulatedBreakTime, setCompletedSessions]);
 
   const toggleTimer = () => {
     setIsActive(!isActive);
   };
 
   const resetTimer = () => {
+    // Reset timer state
     setIsActive(false);
     setTimeLeft(getInitialTime());
     setProgress(100);
+
+    // Reset app state
+    setIsBreak(false);
+    setAccumulatedBreakTime(BASE_BREAK_TIME);
+    setCompletedSessions(0);
   };
 
   const formatTime = (seconds) => {
@@ -130,6 +144,10 @@ const Timer = ({
 
       <Typography variant="body2" color="textSecondary">
         Sessions completed: {completedSessions}
+      </Typography>
+
+      <Typography variant="body2" color="textSecondary">
+        Accumulated Break Time: {accumulatedBreakTime}
       </Typography>
     </TimerContainer>
   );

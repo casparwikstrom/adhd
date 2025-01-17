@@ -16,8 +16,8 @@ function createWindow() {
     height: 680,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false,
-      enableRemoteModule: true,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js'),
     },
   });
 
@@ -59,7 +59,7 @@ async function checkGitCommits() {
   try {
     const log = await git.log();
     const latestCommit = log.latest;
-
+    debugger;
     if (latestCommit && latestCommit.hash !== lastCommitHash) {
       console.log('New commit detected:', latestCommit.message);
       lastCommitHash = latestCommit.hash;
@@ -73,4 +73,4 @@ async function checkGitCommits() {
 }
 
 // Check for new commits every 30 seconds
-setInterval(checkGitCommits, 30000);
+setInterval(checkGitCommits, 10000);

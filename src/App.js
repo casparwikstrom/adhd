@@ -30,20 +30,36 @@ const sounds = {
   }),
 };
 
+const WORK_TIME = 5; // 5 seconds for testing
+const BASE_BREAK_TIME = 5; // 5 seconds for testing
+
 function App() {
   const [isBreak, setIsBreak] = useState(false);
   const [showBreakPrompt, setShowBreakPrompt] = useState(false);
-  const [accumulatedBreakTime, setAccumulatedBreakTime] = useState(0);
+  const [accumulatedBreakTime, setAccumulatedBreakTime] = useState(BASE_BREAK_TIME);
   const [showReward, setShowReward] = useState(false);
   const [completedSessions, setCompletedSessions] = useState(0);
 
+
   useEffect(() => {
-    // Listen for Git commit events from the main process
-    window.electron?.receive('git-commit', () => {
-      setShowReward(true);
-      sounds.complete.play();
-      setTimeout(() => setShowReward(false), 3000);
-    });
+    // Debug listener that logs all data from electron
+    // Add this in DevTools console
+    if (window.electron?.receive) {
+
+      window.electron.receive('git-commit', (data) => {
+        console.log('Git Commit Data:', data);
+      });
+    } else {
+      console.log('Electron receive not available');
+    }
+    // window.electron?.receive('git-commit', (commitData) => {
+    //   console.log('Received from electron:', commitData);  // This will show all data
+    //   debugger;
+    //   // Original code continues...
+    //   setShowReward(true);
+    //   sounds.complete.play();
+    //   setTimeout(() => setShowReward(false), 3000);
+    // });
   }, []);
 
   const handleWorkComplete = () => {
@@ -53,7 +69,6 @@ function App() {
       setShowReward(false);
       setShowBreakPrompt(true);
     }, 3000);
-    setCompletedSessions(prev => prev + 1);
   };
 
   const handleBreakChoice = (takeBreak) => {
@@ -62,8 +77,7 @@ function App() {
       setIsBreak(true);
       sounds.questComplete.play();
     } else {
-      const currentBreakTime = completedSessions % 4 === 0 ? 10 : 5;
-      setAccumulatedBreakTime(prev => prev + currentBreakTime);
+      setAccumulatedBreakTime(accumulatedBreakTime + BASE_BREAK_TIME);
       sounds.questComplete.play();
     }
   };
@@ -89,6 +103,9 @@ function App() {
             accumulatedBreakTime={accumulatedBreakTime}
             setAccumulatedBreakTime={setAccumulatedBreakTime}
             completedSessions={completedSessions}
+            setCompletedSessions={setCompletedSessions}
+            workTime={WORK_TIME}
+            baseBreakTime={BASE_BREAK_TIME}
           />
 
           {showBreakPrompt && (
@@ -97,8 +114,15 @@ function App() {
 
           {isBreak && (
             <YoutubePlayer
-              duration={completedSessions % 4 === 0 ? 10 : 5}
-              onComplete={() => setIsBreak(false)}
+              duration={accumulatedBreakTime}
+              onComplete={() => {
+                setIsBreak(false);
+                setAccumulatedBreakTime(BASE_BREAK_TIME);
+              }}
+              onStartWork={() => {
+                setIsBreak(false);
+                setShowBreakPrompt(false);
+              }}
             />
           )}
 

@@ -5,7 +5,6 @@ const COLORS = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'
 
 const RewardAnimation = () => {
   const canvasRef = useRef(null);
-  const particlesRef = useRef([]);
   const animationFrameRef = useRef();
 
   useEffect(() => {
